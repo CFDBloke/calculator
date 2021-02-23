@@ -51,7 +51,7 @@ main {
 
 .display {
     width:auto;
-    height:auto;
+    height: 0.8em;
     overflow: hidden;
     background-color: white;
     padding: 0.5em;
@@ -61,6 +61,9 @@ main {
     font-weight: 500;
     color: rgba(50,50,50,1);
     border-radius: 0.3em;
+    border-width: 0.1em;
+    border-style: ridge;
+    border-color: #D6D6D6;
 }
 
 button {
