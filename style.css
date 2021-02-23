@@ -25,19 +25,21 @@ main {
     grid-area: calculator;
     display: grid;
     padding: 2vw;
-    background-color: rgba(192,192,192,1);
+    padding-bottom: 4vw;
+    background-color: rgba(80,80,80,1);
     border-radius: 8vw;
     border-width: 3px;
     border-style: solid;
-    border-color: rgba(105, 105, 105, 1);
+    border-color: rgba(20, 20, 20, 1);
     grid-template-columns: repeat(1fr, 5);
     grid-template-rows: repeat(1fr, 5);
     grid-template-areas:
         "display display display display display"
-        "7 8 9 C AC"
-        "4 5 6 times frac"
-        "1 2 3 plus min"
+        "num7 num8 num9 clear all-clear"
+        "num4 num5 num6 times frac"
+        "num1 num2 num3 plus min"
         "zero point blank neg equals";
+    grid-gap:0.5em
 }
 
 .display-container {
@@ -55,10 +57,124 @@ main {
     padding: 0.5em;
     margin: auto 1vw;
     font-family: digitalFont, sans-serif;
-    font-size: 4.5vw;
+    font-size: 80px;
     font-weight: 500;
     color: rgba(50,50,50,1);
     border-radius: 0.3em;
+}
+
+button {
+    width: 1.8em;
+    background-color: #D6D6D6;
+    color: #132967;
+    font-family: Arial, sans-serif;
+    font-size: 60px;
+    font-weight: 500;
+    justify-self: center;
+    border-color: #132967;
+    border-width: 0.1em;
+    border-style: ridge;
+    border-radius: 0.4em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #132967;
+    color: #D6D6D6;
+    border-color: #D6D6D6;
+
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    border-style: groove;
+    background-color: #224AB9;
+    color: transparent;
+    border-color: #F7F7F7;
+    text-shadow: 0.05em 0.05em #D7D7D7;
+}
+
+.num7 {
+    grid-area: num7;
+}
+
+.num8 {
+    grid-area: num8;
+}
+
+.num9 {
+    grid-area: num9;
+}
+
+.clear {
+    grid-area: clear;
+}
+
+.all-clear {
+    grid-area: all-clear;
+}
+
+.num4 {
+    grid-area: num4;
+}
+
+.num5 {
+    grid-area: num5;
+}
+
+.num6 {
+    grid-area: num6;
+}
+
+.times {
+    grid-area: times;
+}
+
+.divide {
+    grid-area: frac;
+}
+
+.num1 {
+    grid-area: num1;
+}
+
+.num2 {
+    grid-area: num2;
+}
+
+.num3 {
+    grid-area: num3;
+}
+
+.add {
+    grid-area: plus;
+}
+
+.subtract {
+    grid-area: min;
+}
+
+.zero {
+    grid-area: zero;
+}
+
+.point {
+    grid-area: point;
+}
+
+.blank {
+    grid-area: blank;
+}
+
+.minus {
+    grid-area: neg;
+}
+
+.equals {
+    grid-area: equals;
 }
 
 @media only screen and (max-width: 1350px) {
@@ -73,12 +189,30 @@ main {
     }
 
     .display {
-        font-size: 30px;
+        font-size: 6vw;
+    }
+
+    button {
+        font-size: 4.5vw;
     }
 }
 
-@media only screen and (min-width: 1800px) {
+/*@media only screen and (min-width: 1800px) {
     .display {
         font-size: 80px;
+    }
+}*/
+
+@media only screen and (max-width: 500px) {
+    .calc-container {
+        grid-gap: 0.2em;
+    }
+    
+    .display {
+        font-size: 30px;
+    }
+
+    button {
+        font-size: 20px;
     }
 }
