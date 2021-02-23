@@ -75,6 +75,7 @@ button {
     font-weight: 500;
     justify-self: center;
     border-color: #132967;
+    transition: all 0.07s ease;
     border-width: 0.1em;
     border-style: ridge;
     border-radius: 0.4em;
@@ -84,8 +85,16 @@ button {
 button:hover {
     background-color: #132967;
     color: #D6D6D6;
+    transition: all 0.07s ease;
     border-color: #D6D6D6;
 
+}
+
+.pressed {
+    background-color: #132967;
+    color: #D6D6D6;
+    transition: all 0.07s ease;
+    border-color: #D6D6D6;
 }
 
 button:focus {
