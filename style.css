@@ -45,16 +45,16 @@ main {
 .display-container {
     display:grid;
     grid-area: display;
-    width:100%;
     align-items: center;
+    width:100%;    
 }
 
-.display {
+.display-main {
     width:auto;
     height: 0.8em;
     overflow: hidden;
     background-color: white;
-    padding: 0.5em;
+    padding: 0.1em 0.5em 0.5em 0.5em;
     margin: auto 1vw;
     font-family: digitalFont, sans-serif;
     font-size: 80px;
@@ -64,6 +64,13 @@ main {
     border-width: 0.1em;
     border-style: ridge;
     border-color: #D6D6D6;
+}
+
+.disp-operator {
+    margin-bottom: 10px;
+    font-family: digitalFont, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
 }
 
 button {

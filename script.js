@@ -14,46 +14,178 @@ function startCalculator() {
         button.addEventListener("click", (e) => {
             const input = e.target.dataset.key;
             takeInput(input);
-            console.log(operation)
         });
     })
 
-    let operation = {}
+    let operation = {};
+
+    const operands = {
+        one: 'first',
+        two: 'second'
+    }
+
+    let activeOperand = operands.one;
 
     function takeInput(input) {
-        
-        if (input !== 'equals') {
-            
-            updateDisplay(display, input);
 
-            updateOperation(input);
+        const inputType = getInputType(input);
 
-        } else if (input === 'equals') {
-
-            operation.result = operate();
-
-            display.textContent = Math.round(operation.result*100000000)/100000000;
-
-            let result = operation.result;
-
-            operation = {};
-
-            operation.firstOperand = result;
-
+        switch (inputType) {
+            case 'number':
+                inputNumber(input);
+                break;
+            case 'operator':
+                inputOperator(input);
+                break;
+            case 'minus':
+                toggleMinus();
+                break;
+            case 'clear':
+                clearOperand();
+                break;
+            case 'all-clear':
+                clearOperation();
+                break;
+            default:
+                checkOperation();
+                break;
         }
     }
 
+    function getInputType(input) {
+        switch (input) {
+            case 'add':
+            case 'subtract':
+            case 'times':
+            case 'divide':
+                return 'operator';
+            case 'minus':
+                return 'minus';
+            case 'clear':
+                return 'clear';
+            case 'all-clear':
+                return 'all-clear';
+            case 'equals':
+                return 'equals';
+            default:
+                return 'number';
+        }
+    }
 
-    function operate() {
+    function inputNumber(input) {
+        if (!isNaN(parseInt(input))) {
+            if (activeOperand === 'first') {
+                if ('firstOperand' in operation) {
+                    operation.firstOperand += input;
+                } else {
+                    operation.firstOperand = input;
+                }
+                display.textContent = operation.firstOperand;
+            } else {
+                if ('secondOperand' in operation) {
+                    operation.secondOperand += input;
+                } else {
+                    operation.secondOperand = input;
+                }
+                display.textContent = operation.secondOperand;
+            }
+        } else {
+            if (activeOperand === 'first') {
+                if(allowDecimal(operation.firstOperand)) {
+                    if ('firstOperand' in operation) {
+                        operation.firstOperand += input;
+                    } else {
+                        operation.firstOperand = '0' + input;
+                    }
+                    display.textContent = operation.firstOperand;
+                }
+            } else {
+                if(allowDecimal(operation.secondOperand)) {
+                    if ('secondOperand' in operation) {
+                        operation.secondOperand += input;
+                    } else {
+                        operation.secondOperand = '0' + input;
+                    }
+                    display.textContent = operation.secondOperand;
+                }
+            }
+        }
+
+    }
+
+    function inputOperator(input) {
+        if (activeOperand === 'first') {
+            operation.operator = input;
+            activeOperand = operands.two;
+            display.textContent = '';
+        } else {
+            operate(input);
+        }
+    }
+
+    function allowDecimal(operandString) {
+        
+        if (operandString === undefined) return true;
+
+        if(operandString.indexOf('.') === -1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function clearOperand() {
+        if (activeOperand === 'first') {
+            delete operation.firstOperand;
+            display.textContent = '';
+        } else {
+            delete operation.secondOperand;
+            display.textContent = '';
+        }
+    }
+
+    function clearOperation() {
+        operation = {};
+        display.textContent = '';
+        activeOperand = operands.one;
+    }
+
+    function checkOperation() {
+        if ('firstOperand' in operation && 'secondOperand' in operation && 'operator' in operation) {
+            operate();
+        }
+    }
+
+    function operate(input) {
+
+        let result = 0;
+
         switch (operation.operator) {
             case 'add':
-                return add(operation.firstOperand, operation.secondOperand);
+                result = add(operation.firstOperand, operation.secondOperand);
+                break;
             case 'subtract':
-                return subtract(operation.firstOperand, operation.secondOperand);
+                result = subtract(operation.firstOperand, operation.secondOperand);
+                break;
             case 'times':
-                return multiply(operation.firstOperand, operation.secondOperand);
-            case String.fromCharCode(247):
-                return divide(operation.firstOperand, operation.secondOperand);
+                result = multiply(operation.firstOperand, operation.secondOperand);
+                break;
+            case 'divide':
+                result = divide(operation.firstOperand, operation.secondOperand);
+                break;
+        }
+
+        display.textContent = result;
+
+        operation = {};
+
+        operation.firstOperand = result;
+
+        activeOperand = operands.one;
+
+        if(input !== undefined) {
+            operation.operator = input;
+            activeOperand = operands.two;
         }
     }
 
@@ -73,69 +205,35 @@ function startCalculator() {
         return num1 / num2;
     }
 
-    function updateDisplay(display, input) {
+    function toggleMinus() {
+        let operandToToggle = undefined;
+
+        if (activeOperand === 'first') {
+            operandToToggle = operation.firstOperand;
+        } else {
+            operandToToggle = operation.secondOperand;
+        }
         
-        if (isOperator(input) || input === 'all-clear' || input === 'clear') {
-            display.textContent = '';
-        }
-        // Check the input is parsable to an integer or is a decimal point
-        else if (!isNaN(parseInt(input)) || input === '.') {
+        if (operandToToggle === undefined) return;
 
-            // Make sure a decimal point hasn't already been inputted
-            if ((display.textContent.match(/\./g) || []).length < 1 || input !== '.') {
-                
-                display.textContent += input;
-
-            }
-        } else if (input === 'minus') {
-            display.textContent = toggleMinus(display.textContent);
-        }
-    }
-
-    function updateOperation(input) {
-
-        if (!('operator' in operation) && !isOperator(input) && input !== 'all-clear') {
-            if (input !== 'clear') {
-                operation.firstOperand = display.textContent;
-            } else {
-                delete operation.firstOperand;
-            }
-        } else if (isOperator(input)) {
-            operation.operator = input;
-        } else if (input === 'all-clear') {
-            operation = {};
+        if (operandToToggle[0] === '-') {
+            operandToToggle = operandToToggle.slice(1);
         } else {
-            if (input !== 'clear') {
-                operation.secondOperand = display.textContent;
-            } else {
-                delete operation.secondOperand;
-            }
+            operandToToggle = '-' + operandToToggle;
         }
-    }
 
-    function isOperator(input) {
-        switch (input) {
-            case 'times':
-            case 'divide':
-            case 'add':
-            case 'subtract':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    function toggleMinus(operand) {
-        if (operand[0] === '-') {
-            return operand.slice(1);
+        if (activeOperand === 'first') {
+            operation.firstOperand = operandToToggle;
+            display.textContent = operation.firstOperand;
         } else {
-            return '-' + operand;
+            operation.secondOperand = operandToToggle;
+            display.textContent = operation.secondOperand;
         }
     }
 
     function registerKeyPress(e) {
         let keyCode = e.keyCode;
-        console.log(keyCode);
+
         let input = '';
 
         switch (keyCode) {
@@ -215,12 +313,13 @@ function startCalculator() {
         }
 
         const btn = document.querySelector(`button[data-key='${input}']`);
-        btn.classList.add('pressed');
-        takeInput(input);
+        if (btn !== null) {
+            btn.classList.add('pressed');
+            takeInput(input);
+        }
     }
 
     function removeTransition(e) {
-        //if (e.propertyName !== 'transform') return; // skip it if it's not a transition
             this.classList.remove('pressed');
       }
 
