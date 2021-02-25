@@ -9,6 +9,7 @@ function startCalculator() {
 
     const buttons = document.querySelectorAll('button');
     const display = document.querySelector('.display');
+    const displayOperator = document.querySelector('.disp-operator');
 
     buttons.forEach( button => {
         button.addEventListener("click", (e) => {
@@ -114,12 +115,20 @@ function startCalculator() {
     }
 
     function inputOperator(input) {
+
+        if ('operator' in operation) {
+            delete operation.operator;
+            activeOperand = operands.one;
+        }
+
         if (activeOperand === 'first') {
             operation.operator = input;
             activeOperand = operands.two;
             display.textContent = '';
+            displayOperator.textContent = getOperatorSymbol();
         } else {
             operate(input);
+            displayOperator.textContent = getOperatorSymbol();
         }
     }
 
@@ -135,24 +144,39 @@ function startCalculator() {
     }
 
     function clearOperand() {
-        if (activeOperand === 'first') {
-            delete operation.firstOperand;
-            display.textContent = '';
-        } else {
-            delete operation.secondOperand;
-            display.textContent = '';
-        }
+        activeOperand === 'first' ? delete operation.firstOperand : delete operation.secondOperand;
+        display.textContent = '';
     }
 
     function clearOperation() {
         operation = {};
         display.textContent = '';
+        displayOperator.textContent = '';
         activeOperand = operands.one;
     }
 
     function checkOperation() {
         if ('firstOperand' in operation && 'secondOperand' in operation && 'operator' in operation) {
+            if (operation.operator === 'divide' && operation.secondOperand == 0) {
+                display.textContent = "ERROR: DIV 0";
+                delete operation.secondOperand;
+                return;
+            }
             operate();
+            displayOperator.textContent = '';
+        }
+    }
+
+    function getOperatorSymbol() {
+        switch (operation.operator) {
+            case 'add':
+                return String.fromCharCode(43);
+            case 'subtract':
+                return String.fromCharCode(8722);
+            case 'times':
+                return String.fromCharCode(10761);
+            case 'divide':
+                return String.fromCharCode(247);
         }
     }
 
@@ -175,7 +199,7 @@ function startCalculator() {
                 break;
         }
 
-        display.textContent = result;
+        display.textContent = Math.round(result*100000000)/100000000;
 
         operation = {};
 
